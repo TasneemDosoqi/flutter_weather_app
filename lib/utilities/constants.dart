@@ -1,13 +1,30 @@
 import 'package:flutter/material.dart';
 
-const kTempTextStyle = TextStyle(
-  fontFamily: 'Spartan MB',
-  fontSize: 100.0,
+const kBigTitleTextStyle = TextStyle(
+  fontFamily: 'PTSansCaption',
+  color: Color(0xffFCFCFC),
+  fontWeight: FontWeight.bold,
+  fontSize: 50.0,
 );
 
 const kMessageTextStyle = TextStyle(
-  fontFamily: 'Spartan MB',
-  fontSize: 60.0,
+  fontFamily: 'PTSansCaption',
+  fontWeight: FontWeight.w300,
+  fontSize: 20.0,
+  color: Color(0xffFCFCFC),
+);
+
+const kConstTextStyle = TextStyle(
+  fontFamily: 'PTSansCaption',
+  fontWeight: FontWeight.w300,
+  fontSize: 15.0,
+  color: Colors.black,
+);
+const kNumberTextStyle = TextStyle(
+  fontFamily: 'PTSansCaption',
+  fontWeight: FontWeight.w500,
+  fontSize: 30.0,
+  color: Colors.black,
 );
 
 const kButtonTextStyle = TextStyle(
@@ -15,6 +32,13 @@ const kButtonTextStyle = TextStyle(
   fontFamily: 'Spartan MB',
 );
 
-const kConditionTextStyle = TextStyle(
-  fontSize: 100.0,
-);
+
+BoxShadow containerShadow() {
+  return BoxShadow(
+    color: Colors.grey.withOpacity(0.2),
+    offset: Offset(0, 3),
+    spreadRadius: 5,
+    blurRadius: 7,
+  );
+}
+
