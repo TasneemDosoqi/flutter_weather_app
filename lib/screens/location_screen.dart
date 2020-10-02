@@ -1,25 +1,26 @@
 import 'package:clima/Modules/Circular_indicator.dart';
+import 'package:clima/screens/city_screen.dart';
 import 'package:clima/services/weather.dart';
 import 'package:clima/utilities/colours.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:clima/utilities/constants.dart';
 import 'package:flutter_custom_clippers/flutter_custom_clippers.dart';
 import 'package:percent_indicator/percent_indicator.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
 
 class LocationScreen extends StatefulWidget {
-
   final locationWeather;
 
-  const LocationScreen(this.locationWeather) ;
+  const LocationScreen(this.locationWeather);
 
   @override
   _LocationScreenState createState() => _LocationScreenState();
 }
 
 class _LocationScreenState extends State<LocationScreen> {
-
   WeatherModel weatherModel = WeatherModel();
-  double temperature ;
+  var temperature;
   int intTemperature;
   String condition;
   var codeCondition;
@@ -34,31 +35,47 @@ class _LocationScreenState extends State<LocationScreen> {
   int visibility;
   double doubleVisibility;
 
-
   @override
   void initState() {
     super.initState();
-    print(widget.locationWeather);
+    //print(widget.locationWeather);
     updateLocationScreen(widget.locationWeather);
   }
 
-  void updateLocationScreen(dynamic weatherData){
-
-     temperature = weatherData['main']['temp'];
-     intTemperature = temperature.toInt();
-     condition = weatherData['weather'][0]['main'];
-     codeCondition = weatherData['weather'][0]['id'];
-     cityName = weatherData['name'];
-      humidity  = weatherData['main']['humidity'];
-      clouds  = weatherData['clouds']['all'];
-      wind  = weatherData['wind']['speed'];
-      pressure  = weatherData['main']['pressure'];
-      feels_like  = weatherData['main']['feels_like'];
-      temp_min  = weatherData['main']['temp_min'];
-      temp_max  = weatherData['main']['temp_max'];
-      visibility  = weatherData['visibility'];
-     doubleVisibility = (visibility/100).roundToDouble();
-
+  void updateLocationScreen(dynamic weatherData) {
+    setState(() {
+      if(weatherData == null){
+        temperature = 0;
+        intTemperature = temperature.toInt();
+        condition = '️Please check location permissions and try again ‼️';
+        codeCondition = -1;
+        cityName = ' ';
+        humidity = 0;
+        clouds = 0;
+        wind = 0;
+        pressure = 0;
+        feels_like = 0;
+        temp_min = 0;
+        temp_max = 0;
+        visibility = 0;
+        doubleVisibility = (visibility / 100).roundToDouble();
+        return;
+      }
+        temperature = weatherData['main']['temp'];
+        intTemperature = temperature.toInt();
+        condition = weatherData['weather'][0]['main'];
+        codeCondition = weatherData['weather'][0]['id'];
+        cityName = weatherData['name'];
+        humidity = weatherData['main']['humidity'];
+        clouds = weatherData['clouds']['all'];
+        wind = weatherData['wind']['speed'];
+        pressure = weatherData['main']['pressure'];
+        feels_like = weatherData['main']['feels_like'];
+        temp_min = weatherData['main']['temp_min'];
+        temp_max = weatherData['main']['temp_max'];
+        visibility = weatherData['visibility'];
+        doubleVisibility = (visibility / 100).roundToDouble();
+    });
   }
 
   @override
@@ -89,7 +106,7 @@ class _LocationScreenState extends State<LocationScreen> {
                       children: [
                         CircularIndicator(
                           indicatorColor: cyan,
-                          percent: humidity/100,
+                          percent: humidity / 100,
                           amount: humidity.toString(),
                           mark: "%",
                           title: "Humidity",
@@ -105,7 +122,7 @@ class _LocationScreenState extends State<LocationScreen> {
                         ),
                         CircularIndicator(
                           indicatorColor: green,
-                          percent: wind/100,
+                          percent: wind / 100,
                           amount: wind.toString(),
                           mark: "mph",
                           title: "Wind",
@@ -143,7 +160,8 @@ class _LocationScreenState extends State<LocationScreen> {
                                 textAlign: TextAlign.right,
                                 style: kConstTextStyle,
                               ),
-                             temperatureRow(temp_min.toInt(),kNumberTextStyle,kNumberTextStyle),
+                              temperatureRow(temp_min.toInt(), kNumberTextStyle,
+                                  kNumberTextStyle),
                               SizedBox(
                                 height: 10,
                               ),
@@ -152,7 +170,8 @@ class _LocationScreenState extends State<LocationScreen> {
                                 textAlign: TextAlign.right,
                                 style: kConstTextStyle,
                               ),
-                              temperatureRow(temp_max.toInt(),kNumberTextStyle,kNumberTextStyle),
+                              temperatureRow(temp_max.toInt(), kNumberTextStyle,
+                                  kNumberTextStyle),
                             ],
                           ),
                           Column(
@@ -163,7 +182,8 @@ class _LocationScreenState extends State<LocationScreen> {
                                 textAlign: TextAlign.right,
                                 style: kConstTextStyle,
                               ),
-                              temperatureRow(feels_like.toInt(),kNumberTextStyle,kNumberTextStyle),
+                              temperatureRow(feels_like.toInt(),
+                                  kNumberTextStyle, kNumberTextStyle),
                               SizedBox(
                                 height: 10,
                               ),
@@ -197,7 +217,8 @@ class _LocationScreenState extends State<LocationScreen> {
                   Padding(
                     padding: EdgeInsets.only(right: 15.0),
                     child: Text(
-                      weatherModel.getMessage(intTemperature)+" in $cityName !",
+                      weatherModel.getMessage(intTemperature) +
+                          " in $cityName !",
                       // textAlign: TextAlign.right,
                       style: kConstTextStyle,
                     ),
@@ -237,7 +258,10 @@ class _LocationScreenState extends State<LocationScreen> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
                       FlatButton(
-                        onPressed: () {},
+                        onPressed: () async {
+                          var weatherData = await weatherModel.getLocationWeather();
+                          updateLocationScreen(weatherData);
+                        },
                         child: Icon(
                           Icons.location_searching,
                           size: 30.0,
@@ -245,7 +269,11 @@ class _LocationScreenState extends State<LocationScreen> {
                         ),
                       ),
                       FlatButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          Navigator.push(context, MaterialPageRoute(builder: (context){
+                            return CityScreen();
+                          }));
+                        },
                         child: Icon(
                           Icons.search,
                           size: 30.0,
@@ -266,8 +294,10 @@ class _LocationScreenState extends State<LocationScreen> {
                     height: 40,
                   ),
                   Text(
-                    condition + " " +weatherModel.getWeatherIcon(codeCondition),
-                    //textAlign: TextAlign.right,
+                    condition +
+                        " " +
+                        weatherModel.getWeatherIcon(codeCondition),
+                    textAlign: TextAlign.center,
                     style: kMessageTextStyle,
                   ),
                   Text(
@@ -283,7 +313,7 @@ class _LocationScreenState extends State<LocationScreen> {
     );
   }
 
-  Row temperatureRow(var temperature, TextStyle numberStyle , TextStyle temperatureStyle) {
+  Row temperatureRow(var temperature, TextStyle numberStyle, TextStyle temperatureStyle) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisAlignment: MainAxisAlignment.center,

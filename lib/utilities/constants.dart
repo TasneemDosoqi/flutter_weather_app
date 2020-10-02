@@ -14,6 +14,19 @@ const kMessageTextStyle = TextStyle(
   color: Color(0xffFCFCFC),
 );
 
+const kHintTextStyle = TextStyle(
+  fontFamily: 'PTSansCaption',
+  fontWeight: FontWeight.w300,
+  fontSize: 20.0,
+  color: Color(0xff504FD3),
+);
+const kInputTextStyle = TextStyle(
+  fontFamily: 'PTSansCaption',
+  fontWeight: FontWeight.w300,
+  fontSize: 20.0,
+  color: Colors.black,
+);
+
 const kConstTextStyle = TextStyle(
   fontFamily: 'PTSansCaption',
   fontWeight: FontWeight.w300,

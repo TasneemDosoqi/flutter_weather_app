@@ -21,25 +21,6 @@ class Location {
 
     }catch (e){
       print(e);
-      // Alert(
-      //   //context: BuildContext(),
-      //   title: "Something went wrong 🙁",
-      //   desc: "unfortunately we are not able to get your location ‼️",
-      //   buttons: [
-      //     DialogButton(
-      //       child: Text(
-      //         "ok",
-      //         style: TextStyle(color: Colors.white, fontSize: 20),
-      //       ),
-      //       onPressed: (
-      //
-      //           ) async {
-      //         Navigator.pop(context);
-      //       },
-      //       width: 200,
-      //     )
-      //   ],
-      // ).show();
     }
   }
 
