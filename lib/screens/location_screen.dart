@@ -6,8 +6,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:clima/utilities/constants.dart';
 import 'package:flutter_custom_clippers/flutter_custom_clippers.dart';
-import 'package:percent_indicator/percent_indicator.dart';
-import 'package:rflutter_alert/rflutter_alert.dart';
+
 
 class LocationScreen extends StatefulWidget {
   final locationWeather;
@@ -269,10 +268,14 @@ class _LocationScreenState extends State<LocationScreen> {
                         ),
                       ),
                       FlatButton(
-                        onPressed: () {
-                          Navigator.push(context, MaterialPageRoute(builder: (context){
+                        onPressed: () async {
+                          var searchedCityName = await Navigator.push(context, MaterialPageRoute(builder: (context){
                             return CityScreen();
                           }));
+                          if(searchedCityName != null){
+                           var weatherData = await weatherModel.getCityWeather(searchedCityName);
+                           updateLocationScreen(weatherData);
+                          }
                         },
                         child: Icon(
                           Icons.search,
