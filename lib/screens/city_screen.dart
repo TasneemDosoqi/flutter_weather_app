@@ -41,7 +41,7 @@ class _CityScreenState extends State<CityScreen> {
               Container(
                 padding: EdgeInsets.all(20.0),
                 child: TextField(
-                  onChanged: (value){
+                  onChanged: (value) {
                     cityName = value;
                   },
                   style: kInputTextStyle,
@@ -59,14 +59,14 @@ class _CityScreenState extends State<CityScreen> {
                       borderRadius: BorderRadius.circular(10),
                       borderSide: BorderSide.none,
                     ),
-
                   ),
                 ),
               ),
+              //This FlatButton is passing city name to the location screen
               FlatButton(
                 color: green,
                 onPressed: () {
-                  Navigator.pop(context,cityName);
+                  Navigator.pop(context, cityName);
                 },
                 child: Padding(
                   padding: const EdgeInsets.all(10),

@@ -7,7 +7,6 @@ import 'package:flutter/material.dart';
 import 'package:clima/utilities/constants.dart';
 import 'package:flutter_custom_clippers/flutter_custom_clippers.dart';
 
-
 class LocationScreen extends StatefulWidget {
   final locationWeather;
 
@@ -37,13 +36,13 @@ class _LocationScreenState extends State<LocationScreen> {
   @override
   void initState() {
     super.initState();
-    //print(widget.locationWeather);
     updateLocationScreen(widget.locationWeather);
   }
 
   void updateLocationScreen(dynamic weatherData) {
     setState(() {
-      if(weatherData == null){
+      // If weather data is null for any issues, the data will be zeros and null
+      if (weatherData == null) {
         temperature = 0;
         intTemperature = temperature.toInt();
         condition = '️Please check location permissions and try again ‼️';
@@ -60,20 +59,22 @@ class _LocationScreenState extends State<LocationScreen> {
         doubleVisibility = (visibility / 100).roundToDouble();
         return;
       }
-        temperature = weatherData['main']['temp'];
-        intTemperature = temperature.toInt();
-        condition = weatherData['weather'][0]['main'];
-        codeCondition = weatherData['weather'][0]['id'];
-        cityName = weatherData['name'];
-        humidity = weatherData['main']['humidity'];
-        clouds = weatherData['clouds']['all'];
-        wind = weatherData['wind']['speed'];
-        pressure = weatherData['main']['pressure'];
-        feels_like = weatherData['main']['feels_like'];
-        temp_min = weatherData['main']['temp_min'];
-        temp_max = weatherData['main']['temp_max'];
-        visibility = weatherData['visibility'];
-        doubleVisibility = (visibility / 100).roundToDouble();
+
+      //Getting weather data from JASON
+      temperature = weatherData['main']['temp'];
+      intTemperature = temperature.toInt();
+      condition = weatherData['weather'][0]['main'];
+      codeCondition = weatherData['weather'][0]['id'];
+      cityName = weatherData['name'];
+      humidity = weatherData['main']['humidity'];
+      clouds = weatherData['clouds']['all'];
+      wind = weatherData['wind']['speed'];
+      pressure = weatherData['main']['pressure'];
+      feels_like = weatherData['main']['feels_like'];
+      temp_min = weatherData['main']['temp_min'];
+      temp_max = weatherData['main']['temp_max'];
+      visibility = weatherData['visibility'];
+      doubleVisibility = (visibility / 100).roundToDouble();
     });
   }
 
@@ -84,7 +85,6 @@ class _LocationScreenState extends State<LocationScreen> {
         decoration: BoxDecoration(
           color: blue,
         ),
-        //constraints: BoxConstraints.expand(),
         child: Stack(
           children: [
             Container(
@@ -138,81 +138,7 @@ class _LocationScreenState extends State<LocationScreen> {
                       ],
                     ),
                   ),
-                  Padding(
-                    padding: EdgeInsets.all(15),
-                    child: Container(
-                      padding: EdgeInsets.all(20),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(15),
-                        color: Colors.white,
-                        boxShadow: [containerShadow()],
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                "MINIMUM",
-                                textAlign: TextAlign.right,
-                                style: kConstTextStyle,
-                              ),
-                              temperatureRow(temp_min.toInt(), kNumberTextStyle,
-                                  kNumberTextStyle),
-                              SizedBox(
-                                height: 10,
-                              ),
-                              Text(
-                                "MAXIMUM",
-                                textAlign: TextAlign.right,
-                                style: kConstTextStyle,
-                              ),
-                              temperatureRow(temp_max.toInt(), kNumberTextStyle,
-                                  kNumberTextStyle),
-                            ],
-                          ),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                "FEELS LIKE",
-                                textAlign: TextAlign.right,
-                                style: kConstTextStyle,
-                              ),
-                              temperatureRow(feels_like.toInt(),
-                                  kNumberTextStyle, kNumberTextStyle),
-                              SizedBox(
-                                height: 10,
-                              ),
-                              Text(
-                                "VISIBILITY",
-                                textAlign: TextAlign.right,
-                                style: kConstTextStyle,
-                              ),
-                              Row(
-                                crossAxisAlignment: CrossAxisAlignment.baseline,
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                textBaseline: TextBaseline.alphabetic,
-                                children: [
-                                  Text(
-                                    doubleVisibility.toString(),
-                                    textAlign: TextAlign.right,
-                                    style: kNumberTextStyle,
-                                  ),
-                                  Text(
-                                    "km",
-                                    style: kNumberTextStyle,
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
+                  weatherDataContainer(),
                   Padding(
                     padding: EdgeInsets.only(right: 15.0),
                     child: Text(
@@ -225,40 +151,20 @@ class _LocationScreenState extends State<LocationScreen> {
                 ],
               ),
             ),
-            ClipPath(
-              clipper: WaveClipperOne(),
-              child: Container(
-                height: MediaQuery.of(context).size.height / 2,
-                color: blue,
-              ),
-            ),
-            Positioned(
-              left: 80,
-              top: -20,
-              height: 200,
-              width: 400,
-              child: Image.asset(
-                'assets/path1.png',
-              ),
-            ),
-            Positioned(
-              right: MediaQuery.of(context).size.width / 2 + 50,
-              top: MediaQuery.of(context).size.height / 3 + 2,
-              height: 150,
-              width: 300,
-              child: Image.asset(
-                'assets/path2.png',
-              ),
-            ),
+            waveClipPath(context),
+            firstPositionedClip(),
+            secondPositionedClip(context),
             SafeArea(
               child: Column(
                 children: [
+                  //upper bar row
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
                       FlatButton(
                         onPressed: () async {
-                          var weatherData = await weatherModel.getLocationWeather();
+                          var weatherData =
+                              await weatherModel.getLocationWeather();
                           updateLocationScreen(weatherData);
                         },
                         child: Icon(
@@ -269,12 +175,14 @@ class _LocationScreenState extends State<LocationScreen> {
                       ),
                       FlatButton(
                         onPressed: () async {
-                          var searchedCityName = await Navigator.push(context, MaterialPageRoute(builder: (context){
+                          var searchedCityName = await Navigator.push(context,
+                              MaterialPageRoute(builder: (context) {
                             return CityScreen();
                           }));
-                          if(searchedCityName != null){
-                           var weatherData = await weatherModel.getCityWeather(searchedCityName);
-                           updateLocationScreen(weatherData);
+                          if (searchedCityName != null) {
+                            var weatherData = await weatherModel
+                                .getCityWeather(searchedCityName);
+                            updateLocationScreen(weatherData);
                           }
                         },
                         child: Icon(
@@ -316,7 +224,125 @@ class _LocationScreenState extends State<LocationScreen> {
     );
   }
 
-  Row temperatureRow(var temperature, TextStyle numberStyle, TextStyle temperatureStyle) {
+  //This function retrieve the container contains the minimum and maximum temperatures and more
+  Padding weatherDataContainer() {
+    return Padding(
+      padding: EdgeInsets.all(15),
+      child: Container(
+        padding: EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(15),
+          color: Colors.white,
+          boxShadow: [containerShadow()],
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  "MINIMUM",
+                  textAlign: TextAlign.right,
+                  style: kConstTextStyle,
+                ),
+                temperatureRow(
+                    temp_min.toInt(), kNumberTextStyle, kNumberTextStyle),
+                SizedBox(
+                  height: 10,
+                ),
+                Text(
+                  "MAXIMUM",
+                  textAlign: TextAlign.right,
+                  style: kConstTextStyle,
+                ),
+                temperatureRow(
+                    temp_max.toInt(), kNumberTextStyle, kNumberTextStyle),
+              ],
+            ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  "FEELS LIKE",
+                  textAlign: TextAlign.right,
+                  style: kConstTextStyle,
+                ),
+                temperatureRow(
+                    feels_like.toInt(), kNumberTextStyle, kNumberTextStyle),
+                SizedBox(
+                  height: 10,
+                ),
+                Text(
+                  "VISIBILITY",
+                  textAlign: TextAlign.right,
+                  style: kConstTextStyle,
+                ),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.baseline,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  textBaseline: TextBaseline.alphabetic,
+                  children: [
+                    Text(
+                      doubleVisibility.toString(),
+                      textAlign: TextAlign.right,
+                      style: kNumberTextStyle,
+                    ),
+                    Text(
+                      "km",
+                      style: kNumberTextStyle,
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  //This function retrieve wave clip used https://pub.dev/packages/flutter_custom_clippers
+  ClipPath waveClipPath(BuildContext context) {
+    return ClipPath(
+      clipper: WaveClipperOne(),
+      child: Container(
+        height: MediaQuery.of(context).size.height / 2,
+        color: blue,
+      ),
+    );
+  }
+
+  //This function retrieve second Floating clip
+  Positioned secondPositionedClip(BuildContext context) {
+    return Positioned(
+      right: MediaQuery.of(context).size.width / 2 + 50,
+      top: MediaQuery.of(context).size.height / 3 + 2,
+      height: 150,
+      width: 300,
+      child: Image.asset(
+        'assets/path2.png',
+      ),
+    );
+  }
+
+  //This function retrieve first Floating clip
+  Positioned firstPositionedClip() {
+    return Positioned(
+      left: 80,
+      top: -20,
+      height: 200,
+      width: 400,
+      child: Image.asset(
+        'assets/path1.png',
+      ),
+    );
+  }
+
+  //This function retrieve the temperature sign
+  Row temperatureRow(
+      var temperature, TextStyle numberStyle, TextStyle temperatureStyle) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisAlignment: MainAxisAlignment.center,
@@ -334,6 +360,7 @@ class _LocationScreenState extends State<LocationScreen> {
     );
   }
 
+  //This function retrieve the three light blue dashes
   Row lineMarks() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,

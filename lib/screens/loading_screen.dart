@@ -1,4 +1,3 @@
-
 import 'package:clima/services/weather.dart';
 import 'package:clima/utilities/colours.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -21,22 +20,22 @@ class _LoadingScreenState extends State<LoadingScreen> {
     getLocationData();
   }
 
+  // This function retrieves the weather data from the WeatherModel based on device location
   void getLocationData() async {
-
     var weatherData = await WeatherModel().getLocationWeather();
-    Navigator.push(context, MaterialPageRoute(builder: (context){
-      return LocationScreen(weatherData);
-    }),
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) {
+        return LocationScreen(weatherData);
+      }),
     );
-
   }
-
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       body: Center(
+        //This spin is from https://pub.dev/packages/flutter_spinkit
         child: SpinKitCircle(
           color: blue,
           size: 100,
@@ -44,5 +43,4 @@ class _LoadingScreenState extends State<LoadingScreen> {
       ),
     );
   }
-
 }

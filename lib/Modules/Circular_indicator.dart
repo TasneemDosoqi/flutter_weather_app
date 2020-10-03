@@ -24,6 +24,7 @@ class CircularIndicator extends StatefulWidget {
   _CircularIndicatorState createState() => _CircularIndicatorState();
 }
 
+// This circular indicator from https://pub.dev/packages/percent_indicator
 class _CircularIndicatorState extends State<CircularIndicator> {
   double amount;
   @override
